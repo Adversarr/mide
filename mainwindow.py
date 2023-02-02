@@ -13,6 +13,9 @@ from ui_form import Ui_MainWindow
 
 
 import subprocess
+import platform
+
+plat = platform.system()
 
 
 QRegularExpression = QtCore.QRegularExpression
@@ -21,6 +24,8 @@ QIODevice = QtCore.QIODevice
 
 
 class MyHighlighter(QSyntaxHighlighter):
+
+
     def highlightBlock(self, text):
         myClassFormat = QTextCharFormat()
         myClassFormat.setFontWeight(QFont.Bold)
@@ -112,8 +117,21 @@ class MainWindow(QMainWindow):
         icon = QIcon("Mua-Logo-Blu.png")
         self.setWindowIcon(icon)
 
+        if not plat == 'Windows':
+            self.change_font('Source Code Pro')
+
+    def change_font(self, font_name):
+        font = QtGui.QFont(font_name)
+        self.ui.plainTextEdit.setFont(font)
+        self.ui.plainTextEdit_2.setFont(font)
+        self.ui.plainTextEdit_3.setFont(font)
+        self.ui.textEdit.setFont(font)
+        self.ui.textEdit_4.setFont(font)
+
     def on_download(self):
         print("Download to board!")
+        if plat != "Windows":
+            self.doLog("MUA Downloader only available under Windows!")
 
         output = os.path.join(self.working_dir, self.build_dir, 'uart_out.txt')
         uart_out = QtCore.QFile(output)
@@ -137,6 +155,9 @@ class MainWindow(QMainWindow):
 
             if p.returncode == 0:
                 self.doLog("Mua downloader exit success!")
+            elif p.returncode == 127:
+                self.doLog("Mua downloader not found!")
+                return
             else:
                 self.doLog(
                     f"Mua downloader exit with code={p.returncode}, turn on verbose mode and check console log for more details")
@@ -150,7 +171,7 @@ class MainWindow(QMainWindow):
                     self.doLog(l)
 
         except OSError as ose:
-            self.doLog(f"OsError: {ose}, please check the path for mias!")
+            self.doLog(f"OsError: {ose}, please check the path for mua!")
         except subprocess.TimeoutExpired as e:
             self.doLog(f"Time out expired, flashing not finished. Consider whether the board is under DOWNLOAD state!")
             p.kill()
@@ -279,6 +300,9 @@ class MainWindow(QMainWindow):
 
             if p.returncode == 0:
                 self.doLog("Mias assembler exit success!")
+            elif p.returncode == 127:
+                self.doLog("Mias assembler not found!")
+                return
             else:
                 self.doLog(
                     f"Mias assembler exit with code={p.returncode}, turn on verbose mode and check console log for more details")
@@ -322,6 +346,8 @@ class MainWindow(QMainWindow):
                 self.doLog("Mico compiler exit success!")
                 out = out.decode('utf-8')
                 self.set_asm(out.splitlines())
+            elif p.returncode == 127:
+                self.doLog("Mico compiler not found!")
             else:
                 self.doLog(
                     f"Mico compiler exit with code={p.returncode}, turn on verbose mode and check console log for more details.")
