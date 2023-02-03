@@ -24,8 +24,6 @@ QIODevice = QtCore.QIODevice
 
 
 class MyHighlighter(QSyntaxHighlighter):
-
-
     def highlightBlock(self, text):
         myClassFormat = QTextCharFormat()
         myClassFormat.setFontWeight(QFont.Bold)
@@ -172,7 +170,7 @@ class MainWindow(QMainWindow):
 
         except OSError as ose:
             self.doLog(f"OsError: {ose}, please check the path for mua!")
-        except subprocess.TimeoutExpired as e:
+        except subprocess.TimeoutExpired:
             self.doLog(f"Time out expired, flashing not finished. Consider whether the board is under DOWNLOAD state!")
             p.kill()
         self.doLog("Mua download done.")
