@@ -1,16 +1,16 @@
-int sleep_count;
+int __sleep_count;
 int sleep(void) {
 	int x;
 	x = 0;
-	while (x < sleep_count) {
+	while (x < __sleep_count) {
 		x = x + 1;
 	}
 	return x;
 }
 
 int set_sleep_count(int ms) {
-	sleep_count = ms * 1310;
-	return sleep_count;
+	__sleep_count = ms * 1310;
+	return __sleep_count;
 }
 
 int sleep_ms(int ms) {
@@ -146,9 +146,6 @@ int set_buzzer_freq(int freq) {
   }
   $(0xFFFFFD10) = cnt;
 }
-
-int i;
-int j;
 
 int has_keyboard_down(void) {
 	int temp;
