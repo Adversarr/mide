@@ -16,11 +16,11 @@ int set_sleep_count(int ms) {
 int sleep_ms(int ms) {
 	set_sleep_count(ms);
 	sleep();
+  return 0;
 }
 
 /* Helpers for LED, tested. */
 int set_led_value(int value) {
-  value = value & 0xFFFF;
   $(0xfffffc60) = value;
   return value;
 }
@@ -32,7 +32,7 @@ int get_led_value(void) {
 }
 
 /* Helpers for Digits. TESTED. */
-int set_higher_value(int a, int b, int c, int d) {
+int set_digital_higher_value(int a, int b, int c, int d) {
   int x;
   a = a & 0xF;
   b = b & 0xF;
@@ -44,7 +44,7 @@ int set_higher_value(int a, int b, int c, int d) {
   x = (x << 4) | d;
   $(0xFFFFFC00) = x;
 }
-int set_lower_value(int a, int b, int c, int d) {
+int set_digital_lower_value(int a, int b, int c, int d) {
   int x;
   a = a & 0xF;
   b = b & 0xF;
@@ -84,6 +84,7 @@ int keyboard_is_pressed(int required) {
   int retval;
   retval = 0;
   x = $(0xFFFFFC10);
+  retval = x & 0xFFFF;
   if (required == 0) {
 	retval = extract(x, 8);
   }
@@ -149,19 +150,57 @@ int set_buzzer_freq(int freq) {
 int i;
 int j;
 
-int main(void) {
-	i = 0;
-	j = 0;
-	set_sleep_count(30);
-	set_digital_status(15, 15);
-	set_buzzer_freq(0);
-	while (1) {
-		i = get_switch_value();
-		j = keyboard_is_pressed(i);
-		if (j) {
-			set_lower_value(i, 1, 1, 16 - i);
-		}
-		sleep();
+int has_keyboard_down(void) {
+	int temp;
+	temp = keyboard_is_pressed(0xFF);
+	if (temp == 0) {
+		temp = 0;
+	} else {
+		temp = 1;
 	}
+	return temp;
+}
+
+int main(void) {
+	/* each stage will cost some time... */
+	set_sleep_count(2000);
+	/* Stage 0: Init ditigals display*/
+	set_digital_higher_value(1, 2, 3, 4);
+	set_digital_lower_value(5, 6, 7, 8);
+	set_digital_status(15, 15);
+	sleep();
+
+	/* Stage 1: Init buzzer, */
+	set_buzzer_freq(200);
+	sleep();
+	set_buzzer_freq(4000);
+	sleep();
+	set_buzzer_freq(1000);
+	sleep();
+	set_buzzer_freq(0);
+	
+	/* Stage 2: Init LED.*/
+	set_led_value(0x55555555);
+	sleep();
+	set_led_value(0xAAAAAAAA);
+	sleep();
+	set_led_value(0xFFFFFFFF);
+	sleep();
+	set_led_value(0x00000000);
+
+	/* Stage 3: Wait for keyboard input. */
+	while (has_keyboard_down() != 1) {
+		sleep();
+		set_led_value(0xAAAAAAAA);
+		sleep();
+		set_led_value(0x55555555);
+	}
+	/* Stage 4: Turn off all the lights.*/
+	set_led_value(0);
+	set_digital_lower_value(0, 0, 0, 0);
+	set_digital_higher_value(0, 0, 0, 0);
+	set_sleep_count(1000);
+	sleep();
+	set_digital_status(0, 0);
 	return 0;
 }

@@ -39,7 +39,7 @@ class MyHighlighter(QSyntaxHighlighter):
         myClassFormat.setFontWeight(QFont.Bold)
         myClassFormat.setForeground(Qt.blue)
         expression = QRegularExpression(
-            "\\b(class|for|while|do|return|static|volatile)\\b")
+            "\\b(class|for|while|do|return|static|volatile|if|else)\\b")
         i = expression.globalMatch(text)
         while i.hasNext():
             match = i.next()
@@ -49,7 +49,7 @@ class MyHighlighter(QSyntaxHighlighter):
         myClassFormat = QTextCharFormat()
         myClassFormat.setFontItalic(True)
         myClassFormat.setForeground(Qt.blue)
-        expression = QRegularExpression("\\$\\(.+\\)")
+        expression = QRegularExpression("\\$\\((0x)?[0-9]+\\)")
         i = expression.globalMatch(text)
         while i.hasNext():
             match = i.next()
@@ -106,7 +106,7 @@ class MainWindow(QMainWindow):
         self.mico_path = "mico.exe"
         self.mua_path = "mua.exe"
         self.verbose_mode = True
-        self.linker_path = "linker.exe"
+        self.linker_path = "milk.exe"
         self.working_dir = os.getcwd()
         self.opened_file = "temporary.c"
         self.doLog(f"Working Dir = {self.working_dir}")
