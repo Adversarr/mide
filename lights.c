@@ -158,46 +158,77 @@ int has_keyboard_down(void) {
 	return temp;
 }
 
-int main(void) {
-	/* each stage will cost some time... */
-	set_sleep_count(2000);
-	/* Stage 0: Init ditigals display*/
-	set_digital_higher_value(1, 2, 3, 4);
-	set_digital_lower_value(5, 6, 7, 8);
-	set_digital_status(15, 15);
-	sleep();
 
-	/* Stage 1: Init buzzer, */
-	set_buzzer_freq(200);
-	sleep();
-	set_buzzer_freq(4000);
-	sleep();
-	set_buzzer_freq(1000);
-	sleep();
-	set_buzzer_freq(0);
+int x;
+
+int update_buzzer(void) {
+	int x;
 	
-	/* Stage 2: Init LED.*/
-	set_led_value(0x55555555);
-	sleep();
-	set_led_value(0xAAAAAAAA);
-	sleep();
-	set_led_value(0xFFFFFFFF);
-	sleep();
-	set_led_value(0x00000000);
+}
 
-	/* Stage 3: Wait for keyboard input. */
-	while (has_keyboard_down() != 1) {
-		sleep();
-		set_led_value(0xAAAAAAAA);
-		sleep();
-		set_led_value(0x55555555);
+int dec_to_hex(int in_x) {
+	int ret;
+	ret = 0;
+	while (in_x > 0) {
+		ret = ret << 4;
+		ret = ret + (in_x - (in_x / 10) * 10);
+		in_x = in_x / 10;
 	}
-	/* Stage 4: Turn off all the lights.*/
-	set_led_value(0);
-	set_digital_lower_value(0, 0, 0, 0);
-	set_digital_higher_value(0, 0, 0, 0);
-	set_sleep_count(1000);
-	sleep();
-	set_digital_status(0, 0);
+	return ret;
+}
+
+int value[10];
+
+int main(void) {
+	int temporary;
+	value[10] = 0;
+	set_sleep_count(30);
+	x = 20;
+	set_digital_status(15, 15);
+	value[11] = 0xAAAAAAAA;
+	while (1) {
+		x = 0;
+	if (keyboard_is_pressed(1)) {
+		x = 261;
+	}
+	if (keyboard_is_pressed(2)) {
+		x = 293;
+	}
+	if (keyboard_is_pressed(3)) {
+		x = 329;
+	}
+	if (keyboard_is_pressed(4)) {
+		x = 350;
+	}
+	if (keyboard_is_pressed(5)) {
+		x = 392;
+	}
+	if (keyboard_is_pressed(6)) {
+		x = 440;
+	}
+	if (keyboard_is_pressed(7)) {
+		x = 494;
+	}
+	if (keyboard_is_pressed(8)) {
+		x = 523;
+	}
+
+
+
+	value[16] = get_switch_value();
+	x = value[16] * x;
+		set_buzzer_freq(x * value[16]);
+		set_digital_lower_value(x >> 12, x >> 8, x >> 4, x);
+		sleep();
+		value[10] = value[10] + 1;
+		if (value[10] == 10) {
+			set_led_value(0xAAAAAAAA);
+		}
+		if (value[10] == 20) {
+			set_led_value(0x55555555);
+			value[10] = 0;
+		}
+
+	}
 	return 0;
 }

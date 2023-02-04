@@ -96,13 +96,16 @@ class MainWindow(QMainWindow):
         self.ui.actionAbout.triggered.connect(self.on_actionAbout)
         self.ui.actionExit.triggered.connect(self.on_actionExit)
         self.ui.pushButton.pressed.connect(self.on_compile)
+        self.ui.pushButton_2.pressed.connect(self.on_link)
         self.ui.pushButton_3.pressed.connect(self.on_asm)
         self.ui.checkBox.stateChanged.connect(self.on_verbose_change)
         self.ui.pushButton_4.pressed.connect(self.on_download)
 
-        print(type(self.ui.textEdit.document()))
+        self.ui.actionOpen_ASM_FIle.triggered.connect(self.on_action_openasm)
+
         self.syntax_highlighter = MyHighlighter(self.ui.textEdit.document())
         self.mias_path = "mias.exe"
+        self.bios_path = "bios.s"
         self.mico_path = "mico.exe"
         self.mua_path = "mua.exe"
         self.verbose_mode = True
@@ -140,7 +143,8 @@ class MainWindow(QMainWindow):
         com = self.ui.spinBox.value()
         args = [self.mua_path, '-f', output, ]
 
-        self.doLog(f"==================================\nMua download begin (COM = {com})")
+        self.doLog(
+            f"==================================\nMua download begin (COM = {com})")
         if self.verbose_mode:
             args.append('-v')
             self.doLog(f"Mua download with {args}")
@@ -171,7 +175,8 @@ class MainWindow(QMainWindow):
         except OSError as ose:
             self.doLog(f"OsError: {ose}, please check the path for mua!")
         except subprocess.TimeoutExpired:
-            self.doLog(f"Time out expired, flashing not finished. Consider whether the board is under DOWNLOAD state!")
+            self.doLog(
+                f"Time out expired, flashing not finished. Consider whether the board is under DOWNLOAD state!")
             p.kill()
         self.doLog("Mua download done.")
 
@@ -195,6 +200,8 @@ class MainWindow(QMainWindow):
         print(f"Resize central widget to ({width}, {height})")
         self.ui.verticalWidget_4.setFixedSize(width, height)
 
+    def on_action_openasm(self):
+        print("Open asm file!")
     def on_actionOpen_File(self):
         print("Open File begin")
         fileName, _ = QtWidgets.QFileDialog.getOpenFileName(self,
@@ -316,6 +323,52 @@ class MainWindow(QMainWindow):
         self.update_coe(dmem, prgmem)
         self.doLog("Mias assemble done.")
 
+    def on_link(self):
+        print("Linking")
+        dir = self.ensure_output_folder()
+        temp_file_path = os.path.join(dir, "asm.s")
+        temp_file = QtCore.QFile(temp_file_path)
+        if not QtCore.QFile.exists(self.bios_path):
+            self.doLog(f"BIOS File not found \"{self.bios_path}\"");
+        if not temp_file.open(QIODevice.WriteOnly | QIODevice.Text):
+            self.doLog(
+                f"Error creating temporary file {temp_file_path} for assamble.")
+            return
+        text = self.ui.plainTextEdit_3.toPlainText()
+        temp_file.write(QtCore.QByteArray.fromStdString(text))
+        temp_file.close()
+        args = [self.linker_path, self.bios_path, temp_file_path, '-b']
+        if self.ui.checkBox_2.isChecked():
+            args.append('-s')
+        if self.verbose_mode:
+            args.append("-v")
+            self.doLog(f"Linking with arguments: {args}")
+
+        p = subprocess.Popen(args, stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, shell=True)
+        try:
+            out, err = p.communicate(10.0)
+            if p.returncode == 127:
+                self.doLog(f"Linker path {self.linker_path} is not valid")
+                return
+            elif p.returncode != 0:
+                self.doLog(f"Linker error! turn on verbose mode for more detailed logs.")
+                return
+            
+            if self.verbose_mode:
+                err = err.decode(errors='ignore')
+                for line in err.splitlines():
+                    self.doLog(line)
+            out = out.decode('utf-8')
+            self.set_asm(out.splitlines())
+
+        except subprocess.TimeoutExpired:
+            self.doLog("Linker timeout.")
+        except OSError as e:
+            self.doLog(f"Os Error: {e}")
+
+        self.doLog("Milk done.")
+
     def on_compile(self):
         print("Compile c code")
         dir = self.ensure_output_folder()
@@ -331,7 +384,8 @@ class MainWindow(QMainWindow):
         temp_file.close()
         self.doLog(f"===================================\nBegin Mico Compile")
         self.doLog(f"Precompile Step: storing buffer to {temp_file_path}")
-        args = [self.mico_path, "-i", temp_file_path, "-O" + str(self.ui.spinBox_2.value())]
+        args = [self.mico_path, "-i", temp_file_path,
+                "-O" + str(self.ui.spinBox_2.value())]
         if self.verbose_mode:
             args.append("-v")
             self.doLog(f"Mico compile with: {args}")
@@ -360,7 +414,6 @@ class MainWindow(QMainWindow):
             self.doLog(f"OsError: {ose}, please check the path for mico!")
 
         self.doLog("Mico compile done.")
-        temp_file.remove()
 
 
 if __name__ == "__main__":

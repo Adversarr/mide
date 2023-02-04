@@ -79,16 +79,59 @@ class Ui_MainWindow(object):
 
         self.horizontalLayout.addLayout(self.verticalLayout_3)
 
+        self.verticalLayout_2 = QVBoxLayout()
+        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
+        self.label = QLabel(self.verticalWidget_4)
+        self.label.setObjectName(u"label")
+
+        self.verticalLayout_2.addWidget(self.label)
+
+        self.plainTextEdit_3 = QPlainTextEdit(self.verticalWidget_4)
+        self.plainTextEdit_3.setObjectName(u"plainTextEdit_3")
+        font1 = QFont()
+        font1.setFamilies([u"Consolas"])
+        font1.setPointSize(10)
+        self.plainTextEdit_3.setFont(font1)
+
+        self.verticalLayout_2.addWidget(self.plainTextEdit_3)
+
+        self.label_2 = QLabel(self.verticalWidget_4)
+        self.label_2.setObjectName(u"label_2")
+
+        self.verticalLayout_2.addWidget(self.label_2)
+
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
+        self.plainTextEdit = QPlainTextEdit(self.verticalWidget_4)
+        self.plainTextEdit.setObjectName(u"plainTextEdit")
+        self.plainTextEdit.setFont(font1)
+        self.plainTextEdit.setReadOnly(True)
+
+        self.horizontalLayout_2.addWidget(self.plainTextEdit)
+
+        self.plainTextEdit_2 = QPlainTextEdit(self.verticalWidget_4)
+        self.plainTextEdit_2.setObjectName(u"plainTextEdit_2")
+        self.plainTextEdit_2.setFont(font1)
+        self.plainTextEdit_2.setReadOnly(True)
+
+        self.horizontalLayout_2.addWidget(self.plainTextEdit_2)
+
+
+        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
+
+
+        self.horizontalLayout.addLayout(self.verticalLayout_2)
+
         self.verticalLayout = QVBoxLayout()
         self.verticalLayout.setObjectName(u"verticalLayout")
+        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.verticalLayout.addItem(self.verticalSpacer)
+
         self.label_3 = QLabel(self.verticalWidget_4)
         self.label_3.setObjectName(u"label_3")
 
         self.verticalLayout.addWidget(self.label_3)
-
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.verticalLayout.addItem(self.verticalSpacer)
 
         self.checkBox = QCheckBox(self.verticalWidget_4)
         self.checkBox.setObjectName(u"checkBox")
@@ -96,6 +139,12 @@ class Ui_MainWindow(object):
         self.checkBox.setTristate(False)
 
         self.verticalLayout.addWidget(self.checkBox)
+
+        self.checkBox_2 = QCheckBox(self.verticalWidget_4)
+        self.checkBox_2.setObjectName(u"checkBox_2")
+        self.checkBox_2.setChecked(True)
+
+        self.verticalLayout.addWidget(self.checkBox_2)
 
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
@@ -153,49 +202,6 @@ class Ui_MainWindow(object):
 
 
         self.horizontalLayout.addLayout(self.verticalLayout)
-
-        self.verticalLayout_2 = QVBoxLayout()
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.label = QLabel(self.verticalWidget_4)
-        self.label.setObjectName(u"label")
-
-        self.verticalLayout_2.addWidget(self.label)
-
-        self.plainTextEdit_3 = QPlainTextEdit(self.verticalWidget_4)
-        self.plainTextEdit_3.setObjectName(u"plainTextEdit_3")
-        font1 = QFont()
-        font1.setFamilies([u"Consolas"])
-        font1.setPointSize(10)
-        self.plainTextEdit_3.setFont(font1)
-
-        self.verticalLayout_2.addWidget(self.plainTextEdit_3)
-
-        self.label_2 = QLabel(self.verticalWidget_4)
-        self.label_2.setObjectName(u"label_2")
-
-        self.verticalLayout_2.addWidget(self.label_2)
-
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.plainTextEdit = QPlainTextEdit(self.verticalWidget_4)
-        self.plainTextEdit.setObjectName(u"plainTextEdit")
-        self.plainTextEdit.setFont(font1)
-        self.plainTextEdit.setReadOnly(True)
-
-        self.horizontalLayout_2.addWidget(self.plainTextEdit)
-
-        self.plainTextEdit_2 = QPlainTextEdit(self.verticalWidget_4)
-        self.plainTextEdit_2.setObjectName(u"plainTextEdit_2")
-        self.plainTextEdit_2.setFont(font1)
-        self.plainTextEdit_2.setReadOnly(True)
-
-        self.horizontalLayout_2.addWidget(self.plainTextEdit_2)
-
-
-        self.verticalLayout_2.addLayout(self.horizontalLayout_2)
-
-
-        self.horizontalLayout.addLayout(self.verticalLayout_2)
 
 
         self.mainLayout.addLayout(self.horizontalLayout)
@@ -267,8 +273,11 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(shortcut)
         self.actionOpen_ASM_FIle.setText(QCoreApplication.translate("MainWindow", u"Open ASM File", None))
         self.label_4.setText(QCoreApplication.translate("MainWindow", u"C source file", None))
-        self.label_3.setText(QCoreApplication.translate("MainWindow", u"MIDE", None))
+        self.label.setText(QCoreApplication.translate("MainWindow", u"asm output", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"coe output(d/p)", None))
+        self.label_3.setText(QCoreApplication.translate("MainWindow", u"Options", None))
         self.checkBox.setText(QCoreApplication.translate("MainWindow", u"Verbose", None))
+        self.checkBox_2.setText(QCoreApplication.translate("MainWindow", u"Sort", None))
         self.label_7.setText(QCoreApplication.translate("MainWindow", u"Opt", None))
         self.label_6.setText(QCoreApplication.translate("MainWindow", u"COM:", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"Compile", None))
@@ -281,8 +290,6 @@ class Ui_MainWindow(object):
         self.pushButton_3.setText(QCoreApplication.translate("MainWindow", u"Assemble", None))
         self.pushButton_2.setText(QCoreApplication.translate("MainWindow", u"Link", None))
         self.pushButton_4.setText(QCoreApplication.translate("MainWindow", u"Download", None))
-        self.label.setText(QCoreApplication.translate("MainWindow", u"asm output", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"coe output(d/p)", None))
         self.label_5.setText(QCoreApplication.translate("MainWindow", u"Log:", None))
         self.menuOpen_File.setTitle(QCoreApplication.translate("MainWindow", u"Open", None))
         self.menuOptions.setTitle(QCoreApplication.translate("MainWindow", u"Options", None))
