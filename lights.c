@@ -14,9 +14,13 @@ int set_sleep_count(int ms) {
 }
 
 int sleep_ms(int ms) {
-	set_sleep_count(ms);
-	sleep();
-  return 0;
+	int count;
+	int x;
+	count = ms * 1310;
+	x = 0;
+	while (x < count) {
+		x = x + 1;
+	}
 }
 
 /* Helpers for LED, tested. */
@@ -136,7 +140,7 @@ int keyboard_is_pressed(int required) {
   return retval;
 }
 
-/* Helper for buzzer, input param `freq` is linear to real frequency */
+/* Helper for buzzer TESTED. */
 int set_buzzer_freq(int freq) {
   int cnt;
   if (freq == 0) {
@@ -179,15 +183,8 @@ int dec_to_hex(int in_x) {
 
 int value[10];
 
-int main(void) {
-	int temporary;
-	value[10] = 0;
-	set_sleep_count(30);
-	x = 20;
-	set_digital_status(15, 15);
-	value[11] = 0xAAAAAAAA;
-	while (1) {
-		x = 0;
+int update_from_keyboard(void) {
+	x = 0;
 	if (keyboard_is_pressed(1)) {
 		x = 261;
 	}
@@ -214,19 +211,27 @@ int main(void) {
 	}
 
 
+}
 
-	value[16] = get_switch_value();
-	x = value[16] * x;
+int y;
+
+int main(void) {
+	value[10] = 0;
+	set_digital_status(15, 15);
+	y = 0xAAAAAAAA;
+	while (1) {
+		update_from_keyboard();
+		value[16] = get_switch_value();
+		set_digital_higher_value(value[16] >> 12, value[16] >> 8, value[16] >> 4, value[16]);
+		sleep_ms(value[16] * 30 + 20);
+		x = value[16] * x;
 		set_buzzer_freq(x * value[16]);
 		set_digital_lower_value(x >> 12, x >> 8, x >> 4, x);
-		sleep();
 		value[10] = value[10] + 1;
-		if (value[10] == 10) {
-			set_led_value(0xAAAAAAAA);
-		}
 		if (value[10] == 20) {
-			set_led_value(0x55555555);
 			value[10] = 0;
+			y = 0xFFFFFFFF ^ y;
+			set_led_value(y);
 		}
 
 	}
